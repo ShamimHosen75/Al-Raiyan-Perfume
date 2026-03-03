@@ -1,34 +1,34 @@
-import { useState } from 'react';
-import { Search, Eye, MoreHorizontal, RefreshCw, Printer, FileText, Truck, Tag, CheckCircle } from 'lucide-react';
-import { useOrders, useUpdateOrderStatus } from '@/hooks/useOrders';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
-import { useSiteSettings } from '@/contexts/SiteSettingsContext';
-import { useStoreSettings } from '@/hooks/useStoreSettings';
+import { OrderCourierSection } from '@/components/admin/OrderCourierSection';
+import { PrintModal } from '@/components/admin/PrintModal';
 import { Button } from '@/components/ui/button';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
 } from '@/components/ui/dialog';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { useSiteSettings } from '@/contexts/SiteSettingsContext';
+import { useOrders, useUpdateOrderStatus } from '@/hooks/useOrders';
+import { useStoreSettings } from '@/hooks/useStoreSettings';
+import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
-import { PrintModal } from '@/components/admin/PrintModal';
-import { OrderCourierSection } from '@/components/admin/OrderCourierSection';
+import { CheckCircle, Eye, FileText, MoreHorizontal, Printer, RefreshCw, Search } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 const statusOptions = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'] as const;
 
@@ -154,9 +154,20 @@ export default function AdminOrders() {
                 ) : (
                   filteredOrders.map((order) => (
                     <tr key={order.id} className="hover:bg-secondary/30 transition-colors">
-                      <td className="px-6 py-4 font-medium">{order.order_number}</td>
+                      <td className="px-6 py-4 font-medium">
+                        <button
+                          onClick={() => setSelectedOrder(order)}
+                          className="hover:underline transition-colors focus:outline-none"
+                        >
+                          {order.order_number}
+                        </button>
+                      </td>
                       <td className="px-6 py-4">{order.customer_name}</td>
-                      <td className="px-6 py-4 text-muted-foreground">{order.customer_phone}</td>
+                      <td className="px-6 py-4 text-muted-foreground">
+                        <a href={`tel:${order.customer_phone}`} className="hover:underline transition-colors block">
+                          {order.customer_phone}
+                        </a>
+                      </td>
                       <td className="px-6 py-4 font-medium">{formatCurrency(order.total)}</td>
                       <td className="px-6 py-4">
                         <Select
@@ -224,7 +235,11 @@ export default function AdminOrders() {
                 <div>
                   <h4 className="font-semibold mb-2">{t('checkout.contactInfo')}</h4>
                   <p className="text-sm">{selectedOrder.customer_name}</p>
-                  <p className="text-sm text-muted-foreground">{selectedOrder.customer_phone}</p>
+                  <p className="text-sm text-muted-foreground">
+                    <a href={`tel:${selectedOrder.customer_phone}`} className="hover:underline transition-colors">
+                      {selectedOrder.customer_phone}
+                    </a>
+                  </p>
                   <p className="text-sm text-muted-foreground">{selectedOrder.customer_email || 'N/A'}</p>
                 </div>
                 <div>

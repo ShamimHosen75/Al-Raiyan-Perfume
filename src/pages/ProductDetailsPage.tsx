@@ -260,7 +260,7 @@ export default function ProductDetailsPage() {
                           {formatCurrency(selectedVariant.price_adjustment)}
                         </span>
                         <span className="badge-sale px-2 py-1 text-sm font-semibold rounded">
-                          -{Math.round((1 - selectedVariant.sale_price / selectedVariant.price_adjustment) * 100)}%
+                          Save {formatCurrency(selectedVariant.price_adjustment - selectedVariant.sale_price)}
                         </span>
                       </>
                     ) : (
@@ -306,15 +306,12 @@ export default function ProductDetailsPage() {
               />
             )}
 
-            {/* Stock */}
+            {/* Stock status — no count shown to customers */}
             <div className="flex items-center gap-2">
               {effectiveStock > 0 ? (
                 <>
                   <Check className="h-4 w-4 text-success" />
                   <span className="text-success font-medium">{t('product.inStock')}</span>
-                  <span className="text-muted-foreground">
-                    ({effectiveStock} available)
-                  </span>
                 </>
               ) : (
                 <span className="text-destructive font-medium">{t('product.outOfStock')}</span>

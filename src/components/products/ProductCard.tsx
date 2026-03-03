@@ -101,7 +101,7 @@ export function ProductCard({ product }: ProductCardProps) {
             )}
             {hasDiscount && (
               <span className="badge-sale px-2 py-0.5 text-[10px] font-semibold rounded">
-                -{discountPercent}%
+                Save {formatCurrency(product.price - product.sale_price!)}
               </span>
             )}
           </div>

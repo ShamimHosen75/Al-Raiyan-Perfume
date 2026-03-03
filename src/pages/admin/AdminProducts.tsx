@@ -260,14 +260,19 @@ export default function AdminProducts() {
                   </Select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">Stock *</label>
-                  <input
-                    type="number"
-                    value={formData.stock}
-                    onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
-                    className="input-shop"
-                    required
-                  />
+                  <label className="block text-sm font-medium mb-2">In Stock *</label>
+                  <Select
+                    value={parseInt(formData.stock) > 0 ? "yes" : "no"}
+                    onValueChange={(value) => setFormData({ ...formData, stock: value === 'yes' ? '1500' : '0' })}
+                  >
+                    <SelectTrigger className="input-shop">
+                      <SelectValue placeholder="Select stock status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="yes">Yes</SelectItem>
+                      <SelectItem value="no">No</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="sm:col-span-2">
                   <label className="block text-sm font-medium mb-2">SKU (optional)</label>
