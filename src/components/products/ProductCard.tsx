@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingBag, Zap, Loader2 } from 'lucide-react';
-import { Product, Category } from '@/hooks/useShopData';
+import { WishlistButton } from '@/components/products/WishlistButton';
+import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/CartContext';
 import { useSiteSettings } from '@/contexts/SiteSettingsContext';
-import { Button } from '@/components/ui/button';
-import { WishlistButton } from '@/components/products/WishlistButton';
+import { Category, Product } from '@/hooks/useShopData';
+import { Loader2, ShoppingBag, Zap } from 'lucide-react';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 interface ProductCardProps {
@@ -121,7 +121,11 @@ export function ProductCard({ product }: ProductCardProps) {
             {product.name}
           </h3>
           <div className="flex items-center gap-1.5 flex-wrap">
-            {hasDiscount ? (
+            {product.has_variants ? (
+              <span className="font-bold text-sm">
+                {formatCurrency(product.min_variant_price ?? product.price)}
+              </span>
+            ) : hasDiscount ? (
               <>
                 <span className="font-bold text-accent text-sm">
                   {formatCurrency(product.sale_price!)}

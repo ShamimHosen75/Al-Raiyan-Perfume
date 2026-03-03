@@ -1,9 +1,9 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import bnTranslations from '@/i18n/translations/bn.json';
 import enTranslations from '@/i18n/translations/en.json';
 import hiTranslations from '@/i18n/translations/hi.json';
-import bnTranslations from '@/i18n/translations/bn.json';
+import { supabase } from '@/integrations/supabase/client';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
 // Helper function to convert hex color to HSL string
 function hexToHSL(hex: string): string {
@@ -98,7 +98,7 @@ const defaultSettings: SiteSettings = {
   default_country_code: 'BD',
   default_country_name: 'Bangladesh',
   currency_code: 'BDT',
-  currency_symbol: '৳',
+  currency_symbol: 'BDT',
   currency_locale: 'bn-BD',
   language: 'en',
   updated_at: new Date().toISOString(),
@@ -287,18 +287,13 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   // Currency formatting function
   const formatCurrency = useCallback((amount: number): string => {
-    try {
-      return new Intl.NumberFormat(activeSettings.currency_locale, {
-        style: 'currency',
-        currency: activeSettings.currency_code,
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-      }).format(amount);
-    } catch {
-      // Fallback if locale/currency is not supported
-      return `${activeSettings.currency_symbol}${amount.toFixed(2)}`;
-    }
-  }, [activeSettings.currency_locale, activeSettings.currency_code, activeSettings.currency_symbol]);
+    const code = activeSettings.currency_code || 'BDT';
+    const formatted = amount.toLocaleString('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    });
+    return `${formatted} ${code}`;
+  }, [activeSettings.currency_code]);
 
   return (
     <SiteSettingsContext.Provider

@@ -1,21 +1,21 @@
-import { useState, useEffect, useMemo } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ChevronRight, Minus, Plus, ShoppingBag, Zap, Check, Loader2 } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { ProductCard } from '@/components/products/ProductCard';
 import { VariantSelector } from '@/components/products/VariantSelector';
 import { WishlistButton } from '@/components/products/WishlistButton';
 import { ReviewForm } from '@/components/reviews/ReviewForm';
 import { ReviewList } from '@/components/reviews/ReviewList';
-import { useProduct, useRelatedProducts } from '@/hooks/useShopData';
-import { useProductVariants, ProductVariant } from '@/hooks/useVariants';
-import { useProductReviews } from '@/hooks/useProductReviews';
+import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/CartContext';
 import { useSiteSettings } from '@/contexts/SiteSettingsContext';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
-import { trackViewContent, trackAddToCart } from '@/lib/facebook-pixel';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useProductReviews } from '@/hooks/useProductReviews';
+import { useProduct, useRelatedProducts } from '@/hooks/useShopData';
+import { ProductVariant, useProductVariants } from '@/hooks/useVariants';
+import { trackAddToCart, trackViewContent } from '@/lib/facebook-pixel';
+import { Check, ChevronRight, Loader2, Minus, Plus, ShoppingBag, Zap } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'sonner';
 
 export default function ProductDetailsPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -54,11 +54,10 @@ export default function ProductDetailsPage() {
     }
   }, [variants, selectedVariant]);
 
-  // Calculate effective price and stock based on selected variant
+  // effectivePrice: use sale_price if set, else price_adjustment (the regular price)
   const effectivePrice = useMemo(() => {
     if (selectedVariant) {
-      const basePrice = product?.sale_price || product?.price || 0;
-      return basePrice + (selectedVariant.price_adjustment || 0);
+      return selectedVariant.sale_price ?? selectedVariant.price_adjustment;
     }
     return product?.sale_price || product?.price || 0;
   }, [product, selectedVariant]);
@@ -114,10 +113,8 @@ export default function ProductDetailsPage() {
       name: selectedVariant
         ? `${product.name} (${[selectedVariant.size, selectedVariant.color].filter(Boolean).join(' / ')})`
         : product.name,
-      price: product.price + (selectedVariant?.price_adjustment || 0),
-      salePrice: product.sale_price
-        ? product.sale_price + (selectedVariant?.price_adjustment || 0)
-        : undefined,
+      price: effectivePrice,
+      salePrice: undefined,
       image: product.images[0] || '/placeholder.svg',
       quantity,
       stock: effectiveStock,
@@ -156,10 +153,8 @@ export default function ProductDetailsPage() {
       name: selectedVariant
         ? `${product.name} (${[selectedVariant.size, selectedVariant.color].filter(Boolean).join(' / ')})`
         : product.name,
-      price: product.price + (selectedVariant?.price_adjustment || 0),
-      salePrice: product.sale_price
-        ? product.sale_price + (selectedVariant?.price_adjustment || 0)
-        : undefined,
+      price: effectivePrice,
+      salePrice: undefined,
       image: product.images[0] || '/placeholder.svg',
       quantity,
       stock: effectiveStock,
@@ -251,15 +246,44 @@ export default function ProductDetailsPage() {
                 <WishlistButton productId={product.id} size="md" />
               </div>
 
-              {/* Price */}
-              <div className="flex items-center gap-3">
-                {hasDiscount ? (
+              {/* Price — updates reactively when a variant is selected */}
+              <div className="flex items-center gap-3 flex-wrap">
+                {hasVariants ? (
+                  selectedVariant ? (
+                    selectedVariant.sale_price != null && selectedVariant.sale_price < selectedVariant.price_adjustment ? (
+                      // Variant has a discount
+                      <>
+                        <span className="text-3xl font-bold text-accent">
+                          {formatCurrency(selectedVariant.sale_price)}
+                        </span>
+                        <span className="text-xl text-muted-foreground line-through">
+                          {formatCurrency(selectedVariant.price_adjustment)}
+                        </span>
+                        <span className="badge-sale px-2 py-1 text-sm font-semibold rounded">
+                          -{Math.round((1 - selectedVariant.sale_price / selectedVariant.price_adjustment) * 100)}%
+                        </span>
+                      </>
+                    ) : (
+                      // Variant has no discount
+                      <span className="text-3xl font-bold">
+                        {formatCurrency(effectivePrice)}
+                      </span>
+                    )
+                  ) : (
+                    // No variant selected yet — show lowest price
+                    <span className="text-3xl font-bold">
+                      {formatCurrency(
+                        Math.min(...variants.filter(v => v.is_active && v.price_adjustment > 0).map(v => v.sale_price ?? v.price_adjustment))
+                      )}
+                    </span>
+                  )
+                ) : hasDiscount ? (
                   <>
                     <span className="text-3xl font-bold text-accent">
-                      {formatCurrency(effectivePrice)}
+                      {formatCurrency(product.sale_price!)}
                     </span>
                     <span className="text-xl text-muted-foreground line-through">
-                      {formatCurrency(product.price + (selectedVariant?.price_adjustment || 0))}
+                      {formatCurrency(product.price)}
                     </span>
                     <span className="badge-sale px-2 py-1 text-sm font-semibold rounded">
                       Save {formatCurrency(product.price - product.sale_price!)}
@@ -267,7 +291,7 @@ export default function ProductDetailsPage() {
                   </>
                 ) : (
                   <span className="text-3xl font-bold">
-                    {formatCurrency(effectivePrice)}
+                    {formatCurrency(product.price)}
                   </span>
                 )}
               </div>

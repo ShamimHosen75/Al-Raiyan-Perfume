@@ -21,6 +21,8 @@ export interface Product {
   created_at: string;
   updated_at: string;
   has_variants?: boolean;
+  /** Lowest active variant price (price_adjustment). Only set when has_variants=true. */
+  min_variant_price?: number;
 }
 
 export interface Category {
@@ -160,6 +162,22 @@ const MOCK_PRODUCTS: (Product & { category: Category | null })[] = [
 ];
 // ──────────────────────────────────────────────────────────────────────────────
 
+/** Transform raw Supabase product row (with product_variants) into a clean Product */
+function mapProduct(p: any): Product & { category: Category | null } {
+  const variantRows: { price_adjustment: number; sale_price: number | null; is_active: boolean }[] =
+    p.product_variants || [];
+  const activePrices = variantRows
+    .filter((v) => v.is_active && v.price_adjustment > 0)
+    .map((v) => v.sale_price != null && v.sale_price < v.price_adjustment ? v.sale_price : v.price_adjustment);
+  const hasVariants = activePrices.length > 0;
+  return {
+    ...p,
+    product_variants: undefined,
+    has_variants: hasVariants,
+    min_variant_price: hasVariants ? Math.min(...activePrices) : undefined,
+  };
+}
+
 // Products - for Shop page (all products)
 export const useProducts = () => {
   return useQuery({
@@ -168,12 +186,12 @@ export const useProducts = () => {
       try {
         const { data, error } = await supabase
           .from('products')
-          .select('*, category:categories(*)')
+          .select('*, category:categories(*), product_variants(price_adjustment, sale_price, is_active)')
           .eq('is_active', true)
           .order('created_at', { ascending: false })
           .limit(20);
         if (error) throw error;
-        if (data && data.length > 0) return data as (Product & { category: Category | null })[];
+        if (data && data.length > 0) return data.map(mapProduct);
       } catch (_) { /* fall through to mock */ }
       return MOCK_PRODUCTS;
     },
@@ -207,12 +225,12 @@ export const useFeaturedProducts = () => {
       try {
         const { data, error } = await supabase
           .from('products')
-          .select('*, category:categories(*)')
+          .select('*, category:categories(*), product_variants(price_adjustment, sale_price, is_active)')
           .eq('is_active', true)
           .order('created_at', { ascending: false })
           .limit(12);
         if (error) throw error;
-        if (data && data.length > 0) return data as (Product & { category: Category | null })[];
+        if (data && data.length > 0) return data.map(mapProduct);
       } catch (_) { /* fall through to mock */ }
       return MOCK_PRODUCTS;
     },
@@ -226,15 +244,11 @@ export const useBestSellers = () => {
       try {
         const { data, error } = await supabase
           .from('products')
-          .select('*, category:categories(*), product_variants(count)')
+          .select('*, category:categories(*), product_variants(price_adjustment, sale_price, is_active)')
           .eq('is_best_seller', true)
           .order('created_at', { ascending: false });
         if (error) throw error;
-        if (data && data.length > 0) return (data || []).map((p: any) => ({
-          ...p,
-          product_variants: undefined,
-          has_variants: (p.product_variants?.[0]?.count || 0) > 0,
-        })) as (Product & { category: Category | null })[];
+        if (data && data.length > 0) return data.map(mapProduct);
       } catch (_) { /* fall through to mock */ }
       return MOCK_PRODUCTS.filter(p => p.is_best_seller);
     },
@@ -248,15 +262,11 @@ export const useNewArrivals = () => {
       try {
         const { data, error } = await supabase
           .from('products')
-          .select('*, category:categories(*), product_variants(count)')
+          .select('*, category:categories(*), product_variants(price_adjustment, sale_price, is_active)')
           .eq('is_new', true)
           .order('created_at', { ascending: false });
         if (error) throw error;
-        if (data && data.length > 0) return (data || []).map((p: any) => ({
-          ...p,
-          product_variants: undefined,
-          has_variants: (p.product_variants?.[0]?.count || 0) > 0,
-        })) as (Product & { category: Category | null })[];
+        if (data && data.length > 0) return data.map(mapProduct);
       } catch (_) { /* fall through to mock */ }
       return MOCK_PRODUCTS.filter(p => p.is_new);
     },
@@ -277,15 +287,11 @@ export const useProductsByCategory = (categorySlug: string) => {
         if (category) {
           const { data, error } = await supabase
             .from('products')
-            .select('*, category:categories(*), product_variants(count)')
+            .select('*, category:categories(*), product_variants(price_adjustment, sale_price, is_active)')
             .eq('category_id', category.id)
             .order('created_at', { ascending: false });
           if (error) throw error;
-          if (data && data.length > 0) return (data || []).map((p: any) => ({
-            ...p,
-            product_variants: undefined,
-            has_variants: (p.product_variants?.[0]?.count || 0) > 0,
-          })) as (Product & { category: Category | null })[];
+          if (data && data.length > 0) return data.map(mapProduct);
         }
       } catch (_) { /* fall through to mock */ }
       return MOCK_PRODUCTS.filter(p => p.category?.slug === categorySlug);
@@ -303,16 +309,12 @@ export const useRelatedProducts = (product: Product | null, limit = 4) => {
         if (product.category_id) {
           const { data, error } = await supabase
             .from('products')
-            .select('*, category:categories(*), product_variants(count)')
+            .select('*, category:categories(*), product_variants(price_adjustment, sale_price, is_active)')
             .eq('category_id', product.category_id)
             .neq('id', product.id)
             .limit(limit);
           if (error) throw error;
-          if (data && data.length > 0) return (data || []).map((p: any) => ({
-            ...p,
-            product_variants: undefined,
-            has_variants: (p.product_variants?.[0]?.count || 0) > 0,
-          })) as (Product & { category: Category | null })[];
+          if (data && data.length > 0) return data.map(mapProduct);
         }
       } catch (_) { /* fall through to mock */ }
       return MOCK_PRODUCTS.filter(p => p.id !== product.id).slice(0, limit);

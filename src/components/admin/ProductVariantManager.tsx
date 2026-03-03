@@ -1,24 +1,24 @@
-import { useState } from 'react';
-import { Plus, Trash2, Edit } from 'lucide-react';
-import { useProductVariants, useCreateVariant, useUpdateVariant, useDeleteVariant, ProductVariant } from '@/hooks/useVariants';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
 } from '@/components/ui/dialog';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+import { ProductVariant, useCreateVariant, useDeleteVariant, useProductVariants, useUpdateVariant } from '@/hooks/useVariants';
+import { Edit, Plus, Trash2 } from 'lucide-react';
+import { useState } from 'react';
 
 interface ProductVariantManagerProps {
   productId: string;
@@ -40,6 +40,7 @@ export function ProductVariantManager({ productId, productName }: ProductVariant
     color: '',
     sku: '',
     price_adjustment: '0',
+    sale_price: '',
     stock: '0',
   });
 
@@ -50,6 +51,7 @@ export function ProductVariantManager({ productId, productName }: ProductVariant
       color: variant.color || '',
       sku: variant.sku,
       price_adjustment: (variant.price_adjustment || 0).toString(),
+      sale_price: variant.sale_price != null ? variant.sale_price.toString() : '',
       stock: variant.stock.toString(),
     });
     setIsDialogOpen(true);
@@ -68,6 +70,7 @@ export function ProductVariantManager({ productId, productName }: ProductVariant
       color: formData.color || null,
       sku: formData.sku,
       price_adjustment: parseFloat(formData.price_adjustment) || 0,
+      sale_price: formData.sale_price !== '' ? parseFloat(formData.sale_price) : null,
       stock: parseInt(formData.stock) || 0,
       is_active: true,
     };
@@ -98,6 +101,7 @@ export function ProductVariantManager({ productId, productName }: ProductVariant
       color: '',
       sku: '',
       price_adjustment: '0',
+      sale_price: '',
       stock: '0',
     });
   };
@@ -167,13 +171,27 @@ export function ProductVariantManager({ productId, productName }: ProductVariant
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Price Adjustment</label>
+                <label className="block text-sm font-medium mb-2">Regular Price *</label>
                 <input
                   type="number"
                   step="0.01"
                   value={formData.price_adjustment}
                   onChange={(e) => setFormData({ ...formData, price_adjustment: e.target.value })}
-                  placeholder="e.g., 10.00 or -5.00"
+                  placeholder="e.g., 700"
+                  className="input-shop"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Sale Price <span className="text-muted-foreground">(Optional — leave blank for no discount)</span>
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={formData.sale_price}
+                  onChange={(e) => setFormData({ ...formData, sale_price: e.target.value })}
+                  placeholder="e.g., 600"
                   className="input-shop"
                 />
               </div>
@@ -220,7 +238,8 @@ export function ProductVariantManager({ productId, productName }: ProductVariant
                   <th className="px-4 py-3 text-left font-medium">Size</th>
                   <th className="px-4 py-3 text-left font-medium">Color</th>
                   <th className="px-4 py-3 text-left font-medium">SKU</th>
-                  <th className="px-4 py-3 text-left font-medium">Adjustment</th>
+                  <th className="px-4 py-3 text-left font-medium">Regular Price</th>
+                  <th className="px-4 py-3 text-left font-medium">Sale Price</th>
                   <th className="px-4 py-3 text-left font-medium">Stock</th>
                   <th className="px-4 py-3 text-left font-medium">Actions</th>
                 </tr>
@@ -233,11 +252,23 @@ export function ProductVariantManager({ productId, productName }: ProductVariant
                     <td className="px-4 py-3 font-mono text-xs">{variant.sku}</td>
                     <td className="px-4 py-3">
                       {variant.price_adjustment ? (
-                        <span className={variant.price_adjustment > 0 ? 'text-accent' : 'text-green-600'}>
-                          {variant.price_adjustment > 0 ? '+' : ''}{variant.price_adjustment.toFixed(2)}
+                        <span className="text-muted-foreground">
+                          {variant.price_adjustment.toFixed(2)}
                         </span>
+                      ) : '-'}
+                    </td>
+                    <td className="px-4 py-3">
+                      {variant.sale_price != null ? (
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-accent font-semibold">{variant.sale_price.toFixed(2)}</span>
+                          {variant.price_adjustment > 0 && (
+                            <span className="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded font-semibold">
+                              -{Math.round((1 - variant.sale_price / variant.price_adjustment) * 100)}%
+                            </span>
+                          )}
+                        </div>
                       ) : (
-                        '-'
+                        <span className="text-muted-foreground text-xs">—</span>
                       )}
                     </td>
                     <td className="px-4 py-3">

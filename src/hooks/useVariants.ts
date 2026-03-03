@@ -1,5 +1,5 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 export interface ProductVariant {
@@ -8,7 +8,8 @@ export interface ProductVariant {
   size: string | null;
   color: string | null;
   sku: string;
-  price_adjustment: number;
+  price_adjustment: number;   // regular / original price
+  sale_price: number | null;  // discounted price (null = no discount)
   stock: number;
   is_active: boolean;
   created_at: string;
