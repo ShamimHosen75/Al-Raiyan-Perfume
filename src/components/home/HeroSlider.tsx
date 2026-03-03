@@ -33,7 +33,8 @@ export function HeroSlider() {
 
   return (
     <section className="relative overflow-hidden bg-secondary">
-      <div className="relative h-[calc(100vh-64px)]">
+      {/* Mobile: aspect-ratio based height so full image shows; Desktop: full viewport */}
+      <div className="relative h-[56vw] min-h-[200px] sm:h-[60vw] md:h-[calc(100vh-64px)]">
         {slides.map((slide, index) => (
           <div
             key={slide.id}
@@ -46,7 +47,7 @@ export function HeroSlider() {
               <img
                 src={slide.image}
                 alt="Banner"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover object-center"
               />
             </Link>
           </div>

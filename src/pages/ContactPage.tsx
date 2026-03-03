@@ -31,13 +31,12 @@ export default function ContactPage() {
     setFormData({ name: '', email: '', subject: '', message: '' });
   };
 
-  const storePhone = storeSettings?.store_phone || '';
+  const storePhone = '01633666834';
   const storeEmail = storeSettings?.store_email || '';
-  const storeAddress = storeSettings?.store_address || '';
-  const storeCity = storeSettings?.store_city ? `${storeSettings.store_city}, BD` : '';
-  const whatsappNumber = storeSettings?.whatsapp_number || storePhone;
+  const whatsappNumber = '8801633666834';
 
-  const fullAddress = [storeAddress, storeCity].filter(Boolean).join(', ');
+  // Exact shop address
+  const SHOP_ADDRESS = 'Shop no 25-29, Eastern Bonbithi Shopping Complex, South Banasree, Dhaka, Bangladesh - 1217';
 
   return (
     <Layout>
@@ -165,7 +164,7 @@ export default function ContactPage() {
             <div className="bg-card rounded-xl border border-border overflow-hidden">
               <div className="h-64 bg-secondary">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d233668.3967627504!2d90.27923699781!3d23.780573415423!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b8b087026b81%3A0x8fa563bbdd5904c2!2sDhaka%2C%20Bangladesh!5e0!3m2!1sen!2sbd!4v1706601234567!5m2!1sen!2sbd"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.4!2d90.4365!3d23.7337!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b7f9dc456789%3A0xabcdef1234567890!2sEastern+Bonbithi+Shopping+Complex%2C+South+Banasree%2C+Dhaka!5e0!3m2!1sen!2sbd!4v1709467200000!5m2!1sen!2sbd"
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
@@ -179,11 +178,15 @@ export default function ContactPage() {
                   <MapPin className="h-5 w-5 text-accent mt-0.5" />
                   <div>
                     <h3 className="font-semibold mb-1">Our Location</h3>
-                    {fullAddress ? (
-                      <p className="text-muted-foreground">{fullAddress}</p>
-                    ) : (
-                      <p className="text-muted-foreground/50 italic">Address not configured</p>
-                    )}
+                    <p className="text-muted-foreground">{SHOP_ADDRESS}</p>
+                    <a
+                      href="https://maps.google.com/?q=Eastern+Bonbithi+Shopping+Complex,+South+Banasree,+Dhaka,+Bangladesh"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-accent hover:underline mt-2 inline-block"
+                    >
+                      Open in Google Maps →
+                    </a>
                   </div>
                 </div>
               </div>

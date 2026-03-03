@@ -50,15 +50,11 @@ export function Footer() {
 
   const storeName = storeSettings?.store_name || 'Al-Raiyan Perfume';
   const storeTagline = storeSettings?.store_tagline || t('home.heroSubtitle');
-  const storePhone = storeSettings?.store_phone || '';
+  const storePhone = '01633666834';
   const storeEmail = storeSettings?.store_email || '';
-  const storeAddress = storeSettings?.store_address || '';
-  const storeCity = storeSettings?.store_city ? `${storeSettings.store_city}, BD` : '';
+  const fullAddress = 'Shop no 25-29, Eastern Bonbithi Shopping Complex, South Banasree, Dhaka - 1217';
   const footerText = storeSettings?.footer_text || '';
-  const whatsappNumber = '+8801622823164';
-
-
-  const fullAddress = [storeAddress, storeCity].filter(Boolean).join(', ');
+  const whatsappNumber = '8801633666834';
 
   return (
     <footer className="bg-primary text-primary-foreground">
@@ -141,12 +137,18 @@ export function Footer() {
           <div>
             <h4 className="font-semibold mb-4">{t('footer.contactUs')}</h4>
             <ul className="space-y-3">
-              {fullAddress && (
-                <li className="flex items-start gap-3 text-sm text-primary-foreground/70">
-                  <MapPin className="h-4 w-4 mt-0.5 shrink-0" />
-                  <span>{fullAddress}</span>
-                </li>
-              )}
+              {/* Address — always shown */}
+              <li className="flex items-start gap-3 text-sm text-primary-foreground/70">
+                <MapPin className="h-4 w-4 mt-0.5 shrink-0" />
+                <a
+                  href="https://maps.google.com/?q=Eastern+Bonbithi+Shopping+Complex,+South+Banasree,+Dhaka,+Bangladesh"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-primary-foreground"
+                >
+                  {fullAddress}
+                </a>
+              </li>
               {storePhone && (
                 <li className="flex items-start gap-3 text-sm text-primary-foreground/70">
                   <Phone className="h-4 w-4 mt-0.5 shrink-0" />
