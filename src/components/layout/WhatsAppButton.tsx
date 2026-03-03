@@ -1,8 +1,13 @@
+import { useLocation } from 'react-router-dom';
+
 /**
  * Floating WhatsApp button — visible on all pages.
- * Clicking opens a WhatsApp chat with the store number.
+ * On the product detail page it rises above the mobile sticky Buy Now bar.
  */
 export function WhatsAppButton() {
+  const location = useLocation();
+  const isProductPage = location.pathname.startsWith('/product/');
+
   // Store WhatsApp number (international format, no + or spaces)
   const phone = '8801633666834';
   const message = encodeURIComponent('Hello! I am interested in your perfumes.');
@@ -14,10 +19,14 @@ export function WhatsAppButton() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat on WhatsApp"
-      className="fixed bottom-6 right-6 z-50 flex items-center justify-center w-14 h-14 rounded-full shadow-lg
+      className={`fixed z-50 flex items-center justify-center w-14 h-14 rounded-full shadow-lg
                  bg-[#25D366] hover:bg-[#1ebe5d] active:scale-95
-                 transition-all duration-200 ease-in-out
-                 hover:shadow-[0_0_0_6px_rgba(37,211,102,0.25)]"
+                 transition-all duration-200 ease-in-out right-6
+                 hover:shadow-[0_0_0_6px_rgba(37,211,102,0.25)]
+                 ${isProductPage
+                   ? 'bottom-24 sm:bottom-6'   // raised only on mobile product page
+                   : 'bottom-6'                 // normal on all other pages
+                 }`}
     >
       {/* WhatsApp SVG icon */}
       <svg
