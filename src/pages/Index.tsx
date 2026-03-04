@@ -23,13 +23,13 @@ const Index = () => {
       {/* Featured Products */}
       <FeaturedProducts />
 
-      {/* New Arrivals */}
+      {/* Perfume Tips */}
       {newArrivals.length > 0 && (
         <section className="section-padding">
           <div className="container-shop">
             <div className="flex items-center justify-between mb-8">
               <div>
-                <h2 className="text-2xl md:text-3xl font-bold">New Arrivals</h2>
+                <h2 className="text-2xl md:text-3xl font-bold">Perfume Tips</h2>
                 <p className="text-muted-foreground mt-1">Fresh styles just landed</p>
               </div>
               <Link

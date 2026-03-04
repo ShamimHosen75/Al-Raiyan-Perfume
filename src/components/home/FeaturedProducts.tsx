@@ -1,8 +1,8 @@
-import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
-import { useFeaturedProducts } from '@/hooks/useShopData';
-import { useSiteSettings } from '@/contexts/SiteSettingsContext';
 import { ProductCard } from '@/components/products/ProductCard';
+import { useSiteSettings } from '@/contexts/SiteSettingsContext';
+import { useFeaturedProducts } from '@/hooks/useShopData';
+import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export function FeaturedProducts() {
   const { data: products = [], isLoading } = useFeaturedProducts();
@@ -15,7 +15,7 @@ export function FeaturedProducts() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h2 className="text-2xl md:text-3xl font-bold">{t('home.featuredProducts')}</h2>
-              <p className="text-muted-foreground mt-1">Handpicked just for you</p>
+              <p className="text-muted-foreground mt-1">Our top-selling perfumes</p>
             </div>
           </div>
           <div className="product-grid">
@@ -36,7 +36,7 @@ export function FeaturedProducts() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-2xl md:text-3xl font-bold">{t('home.featuredProducts')}</h2>
-            <p className="text-muted-foreground mt-1">Handpicked just for you</p>
+            <p className="text-muted-foreground mt-1">Our top-selling perfumes</p>
           </div>
           <Link
             to="/shop"

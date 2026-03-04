@@ -18,6 +18,7 @@ export interface Product {
   is_new: boolean;
   is_best_seller: boolean;
   is_featured: boolean;
+  is_combo: boolean;
   created_at: string;
   updated_at: string;
   has_variants?: boolean;

@@ -1,8 +1,8 @@
-import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
-import { useBestSellers } from '@/hooks/useShopData';
-import { useSiteSettings } from '@/contexts/SiteSettingsContext';
 import { ProductCard } from '@/components/products/ProductCard';
+import { useSiteSettings } from '@/contexts/SiteSettingsContext';
+import { useBestSellers } from '@/hooks/useShopData';
+import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export function BestSellers() {
   const { data: products = [], isLoading } = useBestSellers();
@@ -15,7 +15,7 @@ export function BestSellers() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h2 className="text-2xl md:text-3xl font-bold">{t('home.bestSellers')}</h2>
-              <p className="text-muted-foreground mt-1">Customer favorites this month</p>
+              <p className="text-muted-foreground mt-1">Explore our exclusive Arabian collection</p>
             </div>
           </div>
           <div className="product-grid">
@@ -36,7 +36,7 @@ export function BestSellers() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-2xl md:text-3xl font-bold">{t('home.bestSellers')}</h2>
-            <p className="text-muted-foreground mt-1">Customer favorites this month</p>
+            <p className="text-muted-foreground mt-1">Explore our exclusive Arabian collection</p>
           </div>
           <Link
             to="/shop?filter=bestsellers"

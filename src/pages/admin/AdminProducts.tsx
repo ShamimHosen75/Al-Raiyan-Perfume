@@ -66,6 +66,7 @@ export default function AdminProducts() {
     is_new: false,
     is_best_seller: false,
     is_featured: false,
+    is_combo: false,
     is_active: true,
   });
 
@@ -91,6 +92,7 @@ export default function AdminProducts() {
       is_new: product.is_new || false,
       is_best_seller: product.is_best_seller || false,
       is_featured: product.is_featured || false,
+      is_combo: product.is_combo || false,
       is_active: (product as any).is_active ?? true,
     });
     setIsDialogOpen(true);
@@ -124,6 +126,7 @@ export default function AdminProducts() {
       is_new: formData.is_new,
       is_best_seller: formData.is_best_seller,
       is_featured: formData.is_featured,
+      is_combo: formData.is_combo,
     };
 
     try {
@@ -155,6 +158,7 @@ export default function AdminProducts() {
       is_new: false,
       is_best_seller: false,
       is_featured: false,
+      is_combo: false,
       is_active: true,
     });
   };
@@ -321,7 +325,7 @@ export default function AdminProducts() {
                     onChange={(e) => setFormData({ ...formData, is_new: e.target.checked })}
                     className="w-4 h-4"
                   />
-                  <span className="text-sm">New Arrival</span>
+                  <span className="text-sm">Perfume Tips</span>
                 </label>
                 <label className="flex items-center gap-2">
                   <input
@@ -330,7 +334,7 @@ export default function AdminProducts() {
                     onChange={(e) => setFormData({ ...formData, is_best_seller: e.target.checked })}
                     className="w-4 h-4"
                   />
-                  <span className="text-sm">Best Seller</span>
+                  <span className="text-sm">Arabian Tips</span>
                 </label>
                 <label className="flex items-center gap-2">
                   <input
@@ -339,7 +343,16 @@ export default function AdminProducts() {
                     onChange={(e) => setFormData({ ...formData, is_featured: e.target.checked })}
                     className="w-4 h-4"
                   />
-                  <span className="text-sm">Featured</span>
+                  <span className="text-sm">Best Seller</span>
+                </label>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={formData.is_combo}
+                    onChange={(e) => setFormData({ ...formData, is_combo: e.target.checked })}
+                    className="w-4 h-4"
+                  />
+                  <span className="text-sm">Combo</span>
                 </label>
               </div>
               <div className="flex gap-3 pt-4">
