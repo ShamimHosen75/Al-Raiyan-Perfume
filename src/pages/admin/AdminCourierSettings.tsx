@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
-import { Truck, Save, Zap, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCourierSettings, useSaveCourierSettings, useTestCourierConnection } from '@/hooks/useCourierSettings';
+import { CheckCircle, Loader2, Save, Truck, XCircle, Zap } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 export default function AdminCourierSettings() {
@@ -55,7 +55,11 @@ export default function AdminCourierSettings() {
   const handleTestConnection = async () => {
     setConnectionStatus('idle');
     try {
-      const result = await testConnection.mutateAsync('steadfast');
+      const result = await testConnection.mutateAsync({
+        api_base_url: formData.api_base_url,
+        api_key: formData.api_key,
+        api_secret: formData.api_secret,
+      });
       if (result.success) {
         setConnectionStatus('success');
         toast.success(`Connected! Balance: ${result.balance || 'N/A'} BDT`);

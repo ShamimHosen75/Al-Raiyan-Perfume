@@ -1,4 +1,4 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -52,14 +52,20 @@ Deno.serve(async (req) => {
       .maybeSingle();
 
     if (action === 'test-connection') {
-      if (!settings?.enabled) {
-        return new Response(JSON.stringify({ success: false, error: 'Steadfast not enabled' }), {
+      // Accept credentials from request body (form values) or fall back to DB settings
+      const body = await req.json().catch(() => ({}));
+      const apiKey = body.api_key || settings?.api_key;
+      const apiSecret = body.api_secret || settings?.api_secret;
+      const apiBaseUrl = body.api_base_url || settings?.api_base_url;
+
+      if (!apiKey || !apiSecret || !apiBaseUrl) {
+        return new Response(JSON.stringify({ success: false, error: 'API Key, Secret, and Base URL are required' }), {
           status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
 
-      const res = await fetch(`${settings.api_base_url}/get_balance`, {
-        headers: { 'Api-Key': settings.api_key, 'Secret-Key': settings.api_secret, 'Content-Type': 'application/json' },
+      const res = await fetch(`${apiBaseUrl}/get_balance`, {
+        headers: { 'Api-Key': apiKey, 'Secret-Key': apiSecret, 'Content-Type': 'application/json' },
       });
       const data = await res.json();
       

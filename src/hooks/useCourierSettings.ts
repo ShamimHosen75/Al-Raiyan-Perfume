@@ -1,5 +1,5 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 export interface CourierSettings {
@@ -81,17 +81,37 @@ export const useSaveCourierSettings = () => {
 
 export const useTestCourierConnection = () => {
   return useMutation({
-    mutationFn: async (provider: string) => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      const response = await supabase.functions.invoke('steadfast-courier/test-connection', {
+    mutationFn: async (credentials: {
+      api_base_url: string;
+      api_key: string;
+      api_secret: string;
+    }) => {
+      // Call through Vite dev proxy to bypass CORS
+      // The proxy at /api/steadfast/* forwards to https://portal.steadfast.com.bd/api/v1/*
+      const res = await fetch('/api/steadfast/get_balance', {
         headers: {
-          Authorization: `Bearer ${session?.access_token}`,
+          'Api-Key': credentials.api_key,
+          'Secret-Key': credentials.api_secret,
+          'Content-Type': 'application/json',
         },
       });
 
-      if (response.error) throw new Error(response.error.message);
-      return response.data;
+      if (!res.ok) {
+        // Try to parse error message from response
+        try {
+          const errorData = await res.json();
+          return { success: false, error: errorData.message || `API returned status ${res.status}` };
+        } catch {
+          // Steadfast returns HTML error page for invalid credentials
+          return { success: false, error: 'Invalid API credentials. Please check your API Key and Secret.' };
+        }
+      }
+
+      const data = await res.json();
+      if (data.status === 200) {
+        return { success: true, balance: data.current_balance };
+      }
+      return { success: false, error: data.message || 'Connection failed' };
     },
   });
 };
