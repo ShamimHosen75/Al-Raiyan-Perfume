@@ -23,7 +23,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { testCapiEvent, testPixelConnection, validatePixelId } from '@/lib/facebook-pixel';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { Check, CheckCircle, ChevronsUpDown, Clock, DollarSign, Eye, EyeOff, Globe, Languages, Loader2, Mail, MapPin, Megaphone, Palette, Phone, RotateCcw, Save, Share2, ShieldCheck, Store, XCircle } from 'lucide-react';
+import { Check, CheckCircle, ChevronsUpDown, Clock, DollarSign, Eye, EyeOff, Globe, Languages, Loader2, Mail, MapPin, Megaphone, Palette, Phone, RotateCcw, Save, Server, Share2, ShieldCheck, Store, XCircle } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
