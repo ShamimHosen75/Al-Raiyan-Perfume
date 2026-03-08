@@ -20,7 +20,7 @@ import { useSiteSettings, useUpdateSiteSettings } from '@/contexts/SiteSettingsC
 import { countries, getCountryByCode, getDefaultCountry } from '@/data/countries';
 import { useStoreSettings, useUpdateStoreSettings } from '@/hooks/useStoreSettings';
 import { supabase } from '@/integrations/supabase/client';
-import { testPixelConnection, validatePixelId } from '@/lib/facebook-pixel';
+import { testCapiEvent, testPixelConnection, validatePixelId } from '@/lib/facebook-pixel';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { Check, CheckCircle, ChevronsUpDown, Clock, DollarSign, Eye, EyeOff, Globe, Languages, Loader2, Mail, MapPin, Megaphone, Palette, Phone, RotateCcw, Save, Share2, ShieldCheck, Store, XCircle } from 'lucide-react';
@@ -84,6 +84,9 @@ export default function AdminSettings() {
   const [countryOpen, setCountryOpen] = useState(false);
   const [isTestingPixel, setIsTestingPixel] = useState(false);
   const [pixelTestResult, setPixelTestResult] = useState<'success' | 'error' | null>(null);
+
+  const [isTestingCapi, setIsTestingCapi] = useState(false);
+  const [capiTestResult, setCapiTestResult] = useState<{ success: boolean; message: string } | null>(null);
 
   
   // CAPI Token state
@@ -300,6 +303,28 @@ export default function AdminSettings() {
       toast.success('Marketing settings saved successfully');
     } catch (error) {
       toast.error('Failed to save marketing settings');
+    }
+  };
+
+  const handleTestCapi = async () => {
+    setIsTestingCapi(true);
+    setCapiTestResult(null);
+    try {
+      const result = await testCapiEvent();
+      setCapiTestResult({
+        success: result.success,
+        message: result.success ? 'Test event sent successfully!' : (result.error || 'Failed to send server event'),
+      });
+      if (result.success) {
+        toast.success('CAPI test event sent!');
+      } else {
+        toast.error(result.error || 'CAPI test failed');
+      }
+    } catch (error: any) {
+      setCapiTestResult({ success: false, message: error?.message || 'Unexpected error' });
+      toast.error('Failed to test CAPI');
+    } finally {
+      setIsTestingCapi(false);
     }
   };
 
@@ -1139,6 +1164,35 @@ export default function AdminSettings() {
                       </p>
                     </div>
                   )}
+                  {/* Test Button */}
+                  <div className="mt-4 border-t pt-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleTestCapi}
+                      disabled={isTestingCapi || !hasCapiToken}
+                    >
+                      {isTestingCapi ? (
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      ) : (
+                        <Server className="h-4 w-4 mr-2" />
+                      )}
+                      Send CAPI Test Event
+                    </Button>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Make sure your CAPI Token and Pixel settings are saved first!
+                    </p>
+                    {capiTestResult && (
+                      <div className={`mt-3 flex items-center gap-2 text-sm p-3 rounded-md ${capiTestResult.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                        {capiTestResult.success ? (
+                          <CheckCircle className="h-5 w-5 shrink-0" />
+                        ) : (
+                          <XCircle className="h-5 w-5 shrink-0" />
+                        )}
+                        <span className="font-medium whitespace-pre-wrap">{capiTestResult.message}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
