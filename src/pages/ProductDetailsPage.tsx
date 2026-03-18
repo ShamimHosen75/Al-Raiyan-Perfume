@@ -54,13 +54,27 @@ export default function ProductDetailsPage() {
     }
   }, [variants, selectedVariant]);
 
-  // effectivePrice: use sale_price if set, else price_adjustment (the regular price)
-  const effectivePrice = useMemo(() => {
+  // effectiveBasePrice: the regular/original price
+  const effectiveBasePrice = useMemo(() => {
     if (selectedVariant) {
-      return selectedVariant.sale_price ?? selectedVariant.price_adjustment;
+      return selectedVariant.price_adjustment;
     }
-    return product?.sale_price || product?.price || 0;
+    return product?.price || 0;
   }, [product, selectedVariant]);
+
+  // effectiveSalePrice: the discounted price if it exists
+  const effectiveSalePrice = useMemo(() => {
+    if (selectedVariant) {
+      // Return sale_price only if it's less than regular price, otherwise null
+      return selectedVariant.sale_price !== null && selectedVariant.sale_price < selectedVariant.price_adjustment
+        ? selectedVariant.sale_price
+        : undefined;
+    }
+    return product?.sale_price || undefined;
+  }, [product, selectedVariant]);
+
+  // For backward compatibility / display
+  const effectivePrice = effectiveSalePrice ?? effectiveBasePrice;
 
   const effectiveStock = selectedVariant?.stock ?? product?.stock ?? 0;
   const hasVariants = variants.length > 0;
@@ -113,8 +127,8 @@ export default function ProductDetailsPage() {
       name: selectedVariant
         ? `${product.name} (${[selectedVariant.size, selectedVariant.color].filter(Boolean).join(' / ')})`
         : product.name,
-      price: effectivePrice,
-      salePrice: undefined,
+      price: effectiveBasePrice,
+      salePrice: effectiveSalePrice,
       image: product.images[0] || '/placeholder.svg',
       quantity,
       stock: effectiveStock,
@@ -153,8 +167,8 @@ export default function ProductDetailsPage() {
       name: selectedVariant
         ? `${product.name} (${[selectedVariant.size, selectedVariant.color].filter(Boolean).join(' / ')})`
         : product.name,
-      price: effectivePrice,
-      salePrice: undefined,
+      price: effectiveBasePrice,
+      salePrice: effectiveSalePrice,
       image: product.images[0] || '/placeholder.svg',
       quantity,
       stock: effectiveStock,

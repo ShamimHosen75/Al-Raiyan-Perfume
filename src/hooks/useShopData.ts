@@ -59,108 +59,9 @@ export interface Review {
 }
 
 // ─── Mock data fallback (used when Supabase is not configured) ─────────────────
-const MOCK_CATEGORY: Category = {
-  id: 'cat-1',
-  name: 'Perfumes',
-  slug: 'perfumes',
-  image: 'https://images.unsplash.com/photo-1594035910387-fea47794261f?w=600&q=80',
-  created_at: '2024-01-01T00:00:00Z',
-  updated_at: '2024-01-01T00:00:00Z',
-  product_count: 9,
-};
+const MOCK_CATEGORY: Category | null = null;
 
-const MOCK_PRODUCTS: (Product & { category: Category | null })[] = [
-  {
-    id: '1', name: 'Kasturi Gold', slug: 'kasturi-gold', price: 1500, sale_price: null,
-    category_id: 'cat-1', stock: 50, sku: 'KG-001',
-    short_description: 'An intense, exotic attar crafted from pure, natural musk essence.',
-    description: 'An intense, exotic attar crafted from pure, natural musk essence. Experience the richness and depth of Kasturi Gold, a fragrance that leaves a lasting impression.',
-    images: ['https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=600&q=80'],
-    is_new: false, is_best_seller: true, is_featured: true, is_combo: false,
-    created_at: '2024-01-01T00:00:00Z', updated_at: '2024-01-01T00:00:00Z',
-    category: MOCK_CATEGORY,
-  },
-  {
-    id: '2', name: 'D-Savage', slug: 'd-savage', price: 1200, sale_price: null,
-    category_id: 'cat-1', stock: 45, sku: 'DS-001',
-    short_description: 'An intense, long-lasting attar crafted from 100% pure and natural essences.',
-    description: 'An intense, long-lasting attar crafted from 100% pure and natural essences. D-Savage is a bold and captivating scent for those who want to stand out.',
-    images: ['https://images.unsplash.com/photo-1541643600914-78b084683702?w=600&q=80'],
-    is_new: true, is_best_seller: false, is_featured: true, is_combo: false,
-    created_at: '2024-01-02T00:00:00Z', updated_at: '2024-01-02T00:00:00Z',
-    category: MOCK_CATEGORY,
-  },
-  {
-    id: '3', name: 'Fantasia', slug: 'fantasia', price: 1100, sale_price: null,
-    category_id: 'cat-1', stock: 60, sku: 'FAN-001',
-    short_description: '100% pure, natural, premium attar without artificial oils.',
-    description: '100% pure, natural, premium attar without artificial oils. Fantasia brings a delicate and enchanting aroma that is both soothing and uplifting.',
-    images: ['https://images.unsplash.com/photo-1588776814546-1ffbb3f4a5f8?w=600&q=80'],
-    is_new: false, is_best_seller: true, is_featured: false, is_combo: false,
-    created_at: '2024-01-03T00:00:00Z', updated_at: '2024-01-03T00:00:00Z',
-    category: MOCK_CATEGORY,
-  },
-  {
-    id: '4', name: 'Gucci Flora', slug: 'gucci-flora', price: 1800, sale_price: null,
-    category_id: 'cat-1', stock: 30, sku: 'GF-001',
-    short_description: 'Premium, elegant attar with a rich floral bouquet.',
-    description: 'A luxurious and elegant fragrance. Gucci Flora captures the essence of a blossoming garden, perfect for any occasion.',
-    images: ['https://images.unsplash.com/photo-1600612253971-cafc60f4e6f3?w=600&q=80'],
-    is_new: false, is_best_seller: false, is_featured: true, is_combo: false,
-    created_at: '2024-01-04T00:00:00Z', updated_at: '2024-01-04T00:00:00Z',
-    category: MOCK_CATEGORY,
-  },
-  {
-    id: '5', name: 'The One Maliki', slug: 'the-one-maliki', price: 2500, sale_price: null,
-    category_id: 'cat-1', stock: 20, sku: 'TOM-001',
-    short_description: 'Exquisite and timeless Arabian oud fragrance.',
-    description: 'Exquisite and timeless Arabian oud fragrance. The One Maliki represents the pinnacle of luxury, offering a deep, sophisticated scent that commands attention.',
-    images: ['https://images.unsplash.com/photo-1547887537-6158d64c35b3?w=600&q=80'],
-    is_new: false, is_best_seller: true, is_featured: true, is_combo: false,
-    created_at: '2024-01-05T00:00:00Z', updated_at: '2024-01-05T00:00:00Z',
-    category: MOCK_CATEGORY,
-  },
-  {
-    id: '6', name: 'Beauty Flora', slug: 'beauty-flora', price: 1300, sale_price: null,
-    category_id: 'cat-1', stock: 40, sku: 'BF-001',
-    short_description: 'A delicate floral attar crafted from pure, natural distilled essences.',
-    description: 'A delicate floral attar crafted from pure, natural distilled essences. Beauty Flora is a perfume inspired by the enchanting beauty of blooming flowers, perfect for those who love soft, feminine fragrances.',
-    images: ['https://images.unsplash.com/photo-1615634260167-c8cdede054de?w=600&q=80'],
-    is_new: true, is_best_seller: false, is_featured: true, is_combo: false,
-    created_at: '2024-01-06T00:00:00Z', updated_at: '2024-01-06T00:00:00Z',
-    category: MOCK_CATEGORY,
-  },
-  {
-    id: '7', name: 'Saffroni Oud', slug: 'saffroni-oud', price: 2200, sale_price: null,
-    category_id: 'cat-1', stock: 25, sku: 'SO-001',
-    short_description: 'A rich, warm blend of precious saffron and aged oud.',
-    description: 'A rich, warm blend of precious saffron and aged oud. Saffroni Oud is a deeply luxurious attar that evokes the grandeur of the Orient, with its complex, spicy, and woody character.',
-    images: ['https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=600&q=80'],
-    is_new: false, is_best_seller: true, is_featured: true, is_combo: false,
-    created_at: '2024-01-07T00:00:00Z', updated_at: '2024-01-07T00:00:00Z',
-    category: MOCK_CATEGORY,
-  },
-  {
-    id: '8', name: 'Romance', slug: 'romance', price: 1400, sale_price: null,
-    category_id: 'cat-1', stock: 35, sku: 'ROM-001',
-    short_description: 'A soft, romantic floral attar with the sweetness of cherry blossoms.',
-    description: 'A soft, romantic floral attar with the sweetness of cherry blossoms. Romance captures the essence of love and tenderness, a delightful fragrance for special moments.',
-    images: ['https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=600&q=80'],
-    is_new: true, is_best_seller: true, is_featured: false, is_combo: false,
-    created_at: '2024-01-08T00:00:00Z', updated_at: '2024-01-08T00:00:00Z',
-    category: MOCK_CATEGORY,
-  },
-  {
-    id: '9', name: 'Black XXX', slug: 'black-xxx', price: 1600, sale_price: null,
-    category_id: 'cat-1', stock: 30, sku: 'BX-001',
-    short_description: 'রাজকীয় সুভাস — a royal, bold fragrance with commanding presence.',
-    description: 'রাজকীয় সুভাস (Royal Fragrance). Black XXX is a bold, powerful attar that makes a lasting statement. Its deep, commanding scent is crafted for those who carry themselves with regal confidence.',
-    images: ['https://images.unsplash.com/photo-1607930654830-6f8b7c85a2f5?w=600&q=80'],
-    is_new: false, is_best_seller: false, is_featured: true, is_combo: false,
-    created_at: '2024-01-09T00:00:00Z', updated_at: '2024-01-09T00:00:00Z',
-    category: MOCK_CATEGORY,
-  },
-];
+const MOCK_PRODUCTS: (Product & { category: Category | null })[] = [];
 // ──────────────────────────────────────────────────────────────────────────────
 
 /** Transform raw Supabase product row (with product_variants) into a clean Product */
@@ -228,12 +129,32 @@ export const useFeaturedProducts = () => {
           .from('products')
           .select('*, category:categories(*), product_variants(price_adjustment, sale_price, is_active)')
           .eq('is_active', true)
+          .eq('is_featured', true)
           .order('created_at', { ascending: false })
           .limit(12);
         if (error) throw error;
         if (data && data.length > 0) return data.map(mapProduct);
       } catch (_) { /* fall through to mock */ }
-      return MOCK_PRODUCTS;
+      return MOCK_PRODUCTS.filter(p => p.is_featured);
+    },
+  });
+};
+
+export const useComboProducts = () => {
+  return useQuery({
+    queryKey: ['products', 'combo'],
+    queryFn: async () => {
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('*, category:categories(*), product_variants(price_adjustment, sale_price, is_active)')
+          .eq('is_active', true)
+          .eq('is_combo', true)
+          .order('created_at', { ascending: false });
+        if (error) throw error;
+        if (data && data.length > 0) return data.map(mapProduct);
+      } catch (_) { /* fall through to mock */ }
+      return MOCK_PRODUCTS.filter(p => p.is_combo);
     },
   });
 };
@@ -329,15 +250,17 @@ export const useCategories = () => {
   return useQuery({
     queryKey: ['categories'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('categories')
-        .select('*')
-        .order('name');
-      if (error) {
-        console.error('Failed to load categories:', error.message);
-        return [] as Category[];
+      try {
+        const { data, error } = await supabase
+          .from('categories')
+          .select('*')
+          .order('name');
+        if (error) throw error;
+        if (data && data.length > 0) return data as Category[];
+      } catch (error) {
+        console.error('Failed to load categories:', error);
       }
-      return (data || []) as Category[];
+      return [];
     },
     retry: 2,
   });
@@ -356,7 +279,7 @@ export const useCategory = (slug: string) => {
         if (error) throw error;
         if (data) return data as Category;
       } catch (_) { /* fall through to mock */ }
-      return MOCK_CATEGORY.slug === slug ? MOCK_CATEGORY : null;
+      return MOCK_CATEGORY?.slug === slug ? MOCK_CATEGORY : null;
     },
     enabled: !!slug,
   });

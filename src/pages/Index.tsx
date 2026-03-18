@@ -2,6 +2,7 @@ import { BestSellers } from '@/components/home/BestSellers';
 import { CustomerReviews } from '@/components/home/CustomerReviews';
 import { FeaturedCategories } from '@/components/home/FeaturedCategories';
 import { FeaturedProducts } from '@/components/home/FeaturedProducts';
+import { ComboProducts } from '@/components/home/ComboProducts';
 import { HeroSlider } from '@/components/home/HeroSlider';
 import { Layout } from '@/components/layout/Layout';
 import { ProductCard } from '@/components/products/ProductCard';
@@ -51,6 +52,9 @@ const Index = () => {
 
       {/* Best Sellers */}
       <BestSellers />
+
+      {/* Combo Offers */}
+      <ComboProducts />
 
       {/* Customer Reviews */}
       <CustomerReviews />

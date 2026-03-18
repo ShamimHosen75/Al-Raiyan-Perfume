@@ -28,18 +28,38 @@ type CartAction =
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
     case 'ADD_ITEM': {
-      const existingItem = state.items.find(item => item.id === action.payload.id);
-      if (existingItem) {
+      const existingItemIndex = state.items.findIndex(
+        (item) => item.id === action.payload.id
+      );
+
+      if (existingItemIndex > -1) {
+        const existingItem = state.items[existingItemIndex];
+        const newQuantity = existingItem.quantity + action.payload.quantity;
+
+        const updatedItems = [...state.items];
+        updatedItems[existingItemIndex] = {
+          ...existingItem,
+          // Update details in case prices or variations changed
+          price: action.payload.price,
+          salePrice: action.payload.salePrice,
+          stock: action.payload.stock,
+          name: action.payload.name,
+          image: action.payload.image,
+          variantId: action.payload.variantId,
+          variantInfo: action.payload.variantInfo,
+          quantity: newQuantity > action.payload.stock ? action.payload.stock : newQuantity,
+        };
+
         return {
           ...state,
-          items: state.items.map(item =>
-            item.id === action.payload.id
-              ? { ...item, quantity: Math.min(item.quantity + action.payload.quantity, item.stock) }
-              : item
-          ),
+          items: updatedItems,
         };
       }
-      return { ...state, items: [...state.items, action.payload] };
+
+      return {
+        ...state,
+        items: [...state.items, action.payload],
+      };
     }
     case 'REMOVE_ITEM':
       return { ...state, items: state.items.filter(item => item.id !== action.payload) };
