@@ -3,63 +3,42 @@ import { CustomerReviews } from '@/components/home/CustomerReviews';
 import { FeaturedCategories } from '@/components/home/FeaturedCategories';
 import { FeaturedProducts } from '@/components/home/FeaturedProducts';
 import { ComboProducts } from '@/components/home/ComboProducts';
+import { NewArrivals } from '@/components/home/NewArrivals';
 import { HeroSlider } from '@/components/home/HeroSlider';
+import { LazySection } from '@/components/LazySection';
 import { Layout } from '@/components/layout/Layout';
-import { ProductCard } from '@/components/products/ProductCard';
-import { useNewArrivals } from '@/hooks/useShopData';
-import { ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
 
 const Index = () => {
-  const { data: newArrivals = [], isLoading } = useNewArrivals();
-
   return (
     <Layout>
-      {/* Hero Slider */}
+      {/* Hero Slider — loads immediately */}
       <HeroSlider />
 
-      {/* Featured Categories */}
+      {/* Featured Categories — loads immediately (visible right after hero) */}
       <FeaturedCategories />
 
-      {/* Featured Products */}
-      <FeaturedProducts />
+      {/* Below-the-fold sections: only fetch data when scrolled near */}
+      <LazySection>
+        <FeaturedProducts />
+      </LazySection>
 
-      {/* Perfume Tips */}
-      {newArrivals.length > 0 && (
-        <section className="section-padding">
-          <div className="container-shop">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h2 className="text-2xl md:text-3xl font-bold">Perfume Tips</h2>
-                <p className="text-muted-foreground mt-1">Fresh styles just landed</p>
-              </div>
-              <Link
-                to="/shop?filter=new"
-                className="hidden sm:flex items-center gap-2 text-sm font-medium text-accent hover:underline"
-              >
-                View All <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
+      <LazySection>
+        <NewArrivals />
+      </LazySection>
 
-            <div className="product-grid">
-              {newArrivals.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+      <LazySection>
+        <BestSellers />
+      </LazySection>
 
-      {/* Best Sellers */}
-      <BestSellers />
+      <LazySection>
+        <ComboProducts />
+      </LazySection>
 
-      {/* Combo Offers */}
-      <ComboProducts />
+      <LazySection>
+        <CustomerReviews />
+      </LazySection>
 
-      {/* Customer Reviews */}
-      <CustomerReviews />
-
-      {/* Newsletter CTA */}
+      {/* Newsletter CTA — static content, no data fetch needed */}
       <section className="section-padding bg-secondary/50">
         <div className="container-shop">
           <div className="max-w-2xl mx-auto text-center">
