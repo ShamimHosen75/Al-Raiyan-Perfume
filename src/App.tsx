@@ -54,8 +54,10 @@ import ProtectedAdminRoute from "./components/admin/ProtectedAdminRoute";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 1,
-      staleTime: 5 * 60 * 1000,
+      retry: 3,
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 8000),
+      staleTime: 30 * 60 * 1000, // 30 minutes — data stays fresh longer
+      gcTime: 60 * 60 * 1000, // 1 hour — keep unused data in cache
       refetchOnWindowFocus: false,
     },
   },

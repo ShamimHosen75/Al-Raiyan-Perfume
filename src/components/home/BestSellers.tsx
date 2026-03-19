@@ -5,8 +5,10 @@ import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export function BestSellers() {
-  const { data: products = [], isLoading } = useBestSellers();
+  const { data: products = [], isLoading, isError } = useBestSellers();
   const { t } = useSiteSettings();
+
+  if (isError) return null;
 
   if (isLoading) {
     return (
