@@ -13,8 +13,11 @@ import { DebugPanel } from "@/components/DebugPanel";
 import { FacebookPixelProvider } from "@/components/FacebookPixelProvider";
 import { CookieConsentBanner } from "@/components/CookieConsentBanner";
 import { ScrollToTop } from "@/components/ScrollToTop";
-// Store pages
-const Index = lazy(() => import("./pages/Index"));
+
+// Home page - loaded eagerly for instant display
+import Index from "./pages/Index";
+
+// Store pages - lazy loaded
 const ShopPage = lazy(() => import("./pages/ShopPage"));
 const CategoriesPage = lazy(() => import("./pages/CategoriesPage"));
 const CategoryPage = lazy(() => import("./pages/CategoryPage"));
@@ -27,7 +30,7 @@ const AboutPage = lazy(() => import("./pages/AboutPage"));
 const FAQPage = lazy(() => import("./pages/FAQPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
-// Admin pages
+// Admin pages - lazy loaded
 const AdminLoginPage = lazy(() => import("./pages/admin/AdminLoginPage"));
 const AdminRegisterPage = lazy(() => import("./pages/admin/AdminRegisterPage"));
 const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"));
@@ -76,47 +79,47 @@ const App = () => (
                     </div>
                   }>
                     <Routes>
-                    {/* Public Store Routes - No auth required */}
-                    <Route path="/" element={<Index />} />
-                    <Route path="/shop" element={<ShopPage />} />
-                    <Route path="/categories" element={<CategoriesPage />} />
-                    <Route path="/category/:slug" element={<CategoryPage />} />
-                    <Route path="/product/:slug" element={<ProductDetailsPage />} />
-                    <Route path="/cart" element={<CartPage />} />
-                    <Route path="/checkout" element={<CheckoutPage />} />
-                    <Route path="/order-success" element={<OrderSuccessPage />} />
-                    <Route path="/contact" element={<ContactPage />} />
-                    <Route path="/about" element={<AboutPage />} />
-                    <Route path="/faq" element={<FAQPage />} />
-                    <Route path="/track-order" element={<TrackOrderPage />} />
+                      {/* Public Store Routes - No auth required */}
+                      <Route path="/" element={<Index />} />
+                      <Route path="/shop" element={<ShopPage />} />
+                      <Route path="/categories" element={<CategoriesPage />} />
+                      <Route path="/category/:slug" element={<CategoryPage />} />
+                      <Route path="/product/:slug" element={<ProductDetailsPage />} />
+                      <Route path="/cart" element={<CartPage />} />
+                      <Route path="/checkout" element={<CheckoutPage />} />
+                      <Route path="/order-success" element={<OrderSuccessPage />} />
+                      <Route path="/contact" element={<ContactPage />} />
+                      <Route path="/about" element={<AboutPage />} />
+                      <Route path="/faq" element={<FAQPage />} />
+                      <Route path="/track-order" element={<TrackOrderPage />} />
 
-                    {/* Admin Auth Routes - No protection */}
-                    <Route path="/admin/login" element={<AdminLoginPage />} />
-                    <Route path="/admin/register" element={<AdminRegisterPage />} />
+                      {/* Admin Auth Routes - No protection */}
+                      <Route path="/admin/login" element={<AdminLoginPage />} />
+                      <Route path="/admin/register" element={<AdminRegisterPage />} />
 
-                    {/* Protected Admin Routes */}
-                    <Route element={<ProtectedAdminRoute />}>
-                      <Route path="/admin" element={<AdminLayout />}>
-                        <Route index element={<AdminDashboard />} />
-                        <Route path="products" element={<AdminProducts />} />
-                        <Route path="categories" element={<AdminCategories />} />
-                        <Route path="orders" element={<AdminOrders />} />
-                        <Route path="slider" element={<AdminSlider />} />
-                        <Route path="settings" element={<AdminSettings />} />
-                        <Route path="courier" element={<AdminCourierSettings />} />
-                        <Route path="coupons" element={<AdminCoupons />} />
-                        <Route path="shipping" element={<AdminShipping />} />
-                        <Route path="shipping-methods" element={<AdminShippingMethods />} />
-                        <Route path="reviews" element={<AdminReviews />} />
-                        <Route path="leads" element={<AdminCheckoutLeads />} />
-                        <Route path="users" element={<AdminUsers />} />
-                        <Route path="payment-methods" element={<AdminPaymentMethods />} />
+                      {/* Protected Admin Routes */}
+                      <Route element={<ProtectedAdminRoute />}>
+                        <Route path="/admin" element={<AdminLayout />}>
+                          <Route index element={<AdminDashboard />} />
+                          <Route path="products" element={<AdminProducts />} />
+                          <Route path="categories" element={<AdminCategories />} />
+                          <Route path="orders" element={<AdminOrders />} />
+                          <Route path="slider" element={<AdminSlider />} />
+                          <Route path="settings" element={<AdminSettings />} />
+                          <Route path="courier" element={<AdminCourierSettings />} />
+                          <Route path="coupons" element={<AdminCoupons />} />
+                          <Route path="shipping" element={<AdminShipping />} />
+                          <Route path="shipping-methods" element={<AdminShippingMethods />} />
+                          <Route path="reviews" element={<AdminReviews />} />
+                          <Route path="leads" element={<AdminCheckoutLeads />} />
+                          <Route path="users" element={<AdminUsers />} />
+                          <Route path="payment-methods" element={<AdminPaymentMethods />} />
+                        </Route>
                       </Route>
-                    </Route>
 
-                    {/* Catch-all */}
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
+                      {/* Catch-all */}
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
                   </Suspense>
                   <CookieConsentBanner />
                   <DebugPanel />
@@ -131,3 +134,4 @@ const App = () => (
 );
 
 export default App;
+
