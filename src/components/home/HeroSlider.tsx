@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 export function HeroSlider() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const { data: slides = [], isLoading, isError } = useSliderSlides(true);
+  const { data: slides = [], isLoading } = useSliderSlides(true);
 
   const nextSlide = useCallback(() => {
     if (slides.length === 0) return;
@@ -22,8 +22,6 @@ export function HeroSlider() {
     const timer = setInterval(nextSlide, 5000);
     return () => clearInterval(timer);
   }, [nextSlide, slides.length]);
-
-  if (isError) return null;
 
   if (isLoading) {
     return <div className="h-[calc(100vh-64px)] bg-secondary animate-pulse" />;

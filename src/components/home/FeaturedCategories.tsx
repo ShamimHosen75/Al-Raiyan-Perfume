@@ -4,10 +4,8 @@ import { useSiteSettings } from '@/contexts/SiteSettingsContext';
 import { ArrowRight } from 'lucide-react';
 
 export function FeaturedCategories() {
-  const { data: categories = [], isLoading, isError } = useCategories();
+  const { data: categories = [], isLoading } = useCategories();
   const { t } = useSiteSettings();
-
-  if (isError) return null;
 
   if (isLoading) {
     return (

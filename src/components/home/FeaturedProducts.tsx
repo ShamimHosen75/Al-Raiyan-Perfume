@@ -5,10 +5,8 @@ import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export function FeaturedProducts() {
-  const { data: products = [], isLoading, isError } = useFeaturedProducts();
+  const { data: products = [], isLoading } = useFeaturedProducts();
   const { t } = useSiteSettings();
-
-  if (isError) return null;
 
   if (isLoading) {
     return (
