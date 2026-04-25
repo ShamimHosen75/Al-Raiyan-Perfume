@@ -65,6 +65,7 @@ export default function AdminProducts() {
     images: [] as string[],
     is_new: false,
     is_best_seller: false,
+    is_organic_ator: false,
     is_featured: false,
     is_combo: false,
     is_active: true,
@@ -91,6 +92,7 @@ export default function AdminProducts() {
       images: product.images || [],
       is_new: product.is_new || false,
       is_best_seller: product.is_best_seller || false,
+      is_organic_ator: product.is_organic_ator || false,
       is_featured: product.is_featured || false,
       is_combo: product.is_combo || false,
       is_active: (product as any).is_active ?? true,
@@ -125,6 +127,7 @@ export default function AdminProducts() {
       images: formData.images,
       is_new: formData.is_new,
       is_best_seller: formData.is_best_seller,
+      is_organic_ator: formData.is_organic_ator,
       is_featured: formData.is_featured,
       is_combo: formData.is_combo,
     };
@@ -157,6 +160,7 @@ export default function AdminProducts() {
       images: [],
       is_new: false,
       is_best_seller: false,
+      is_organic_ator: false,
       is_featured: false,
       is_combo: false,
       is_active: true,
@@ -335,6 +339,15 @@ export default function AdminProducts() {
                     className="w-4 h-4"
                   />
                   <span className="text-sm">Arabian Tips</span>
+                </label>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={formData.is_organic_ator}
+                    onChange={(e) => setFormData({ ...formData, is_organic_ator: e.target.checked })}
+                    className="w-4 h-4"
+                  />
+                  <span className="text-sm">Organic Ator</span>
                 </label>
                 <label className="flex items-center gap-2">
                   <input

@@ -587,8 +587,10 @@ export type Database = {
           images: string[]
           is_active: boolean
           is_best_seller: boolean | null
+          is_combo: boolean | null
           is_featured: boolean | null
           is_new: boolean | null
+          is_organic_ator: boolean | null
           name: string
           price: number
           sale_price: number | null
@@ -606,8 +608,10 @@ export type Database = {
           images?: string[]
           is_active?: boolean
           is_best_seller?: boolean | null
+          is_combo?: boolean | null
           is_featured?: boolean | null
           is_new?: boolean | null
+          is_organic_ator?: boolean | null
           name: string
           price: number
           sale_price?: number | null
@@ -625,8 +629,10 @@ export type Database = {
           images?: string[]
           is_active?: boolean
           is_best_seller?: boolean | null
+          is_combo?: boolean | null
           is_featured?: boolean | null
           is_new?: boolean | null
+          is_organic_ator?: boolean | null
           name?: string
           price?: number
           sale_price?: number | null

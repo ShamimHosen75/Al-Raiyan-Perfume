@@ -17,6 +17,7 @@ export interface Product {
   images: string[];
   is_new: boolean;
   is_best_seller: boolean;
+  is_organic_ator: boolean;
   is_featured: boolean;
   is_combo: boolean;
   created_at: string;
