@@ -145,6 +145,34 @@ export const useUpdateOrderStatus = () => {
   });
 };
 
+export const useDeleteOrder = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      // Delete order items first (cascade if not configured in DB)
+      const { error: itemsError } = await supabase
+        .from('order_items')
+        .delete()
+        .eq('order_id', id);
+      if (itemsError) throw itemsError;
+
+      const { error } = await supabase
+        .from('orders')
+        .delete()
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['orders'] });
+      toast.success('Order deleted successfully');
+    },
+    onError: (error) => {
+      toast.error('Failed to delete order: ' + error.message);
+    },
+  });
+};
+
 // Store settings
 export interface StoreSetting {
   id: string;

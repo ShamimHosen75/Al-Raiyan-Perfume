@@ -2,31 +2,41 @@ import { OrderCourierSection } from '@/components/admin/OrderCourierSection';
 import { PrintModal } from '@/components/admin/PrintModal';
 import { Button } from '@/components/ui/button';
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
 } from '@/components/ui/dialog';
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
 import { useSiteSettings } from '@/contexts/SiteSettingsContext';
-import { useOrders, useUpdateOrderStatus } from '@/hooks/useOrders';
+import { useOrders, useUpdateOrderStatus, useDeleteOrder } from '@/hooks/useOrders';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
-import { CheckCircle, Eye, FileText, MoreHorizontal, Printer, RefreshCw, Search } from 'lucide-react';
+import { CheckCircle, Eye, FileText, MoreHorizontal, Printer, RefreshCw, Search, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -36,11 +46,13 @@ export default function AdminOrders() {
   const { data: orders = [], isLoading, error, refetch } = useOrders();
   const { data: storeSettings } = useStoreSettings();
   const updateStatus = useUpdateOrderStatus();
+  const deleteOrder = useDeleteOrder();
   const { t, formatCurrency } = useSiteSettings();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
+  const [deleteOrderId, setDeleteOrderId] = useState<string | null>(null);
   const [printModal, setPrintModal] = useState<{ open: boolean; type: 'invoice' | 'courier-slip' | 'courier-label'; order: any | null }>({
     open: false,
     type: 'invoice',
@@ -58,6 +70,12 @@ export default function AdminOrders() {
 
   const handleStatusChange = async (orderId: string, newStatus: string) => {
     await updateStatus.mutateAsync({ id: orderId, status: newStatus as any });
+  };
+
+  const handleDeleteOrder = async () => {
+    if (!deleteOrderId) return;
+    await deleteOrder.mutateAsync(deleteOrderId);
+    setDeleteOrderId(null);
   };
 
   const getStatusColor = (status: string) => {
@@ -210,6 +228,14 @@ export default function AdminOrders() {
                               <Printer className="h-4 w-4 mr-2" />
                               Print Courier Slip
                             </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              onClick={() => setDeleteOrderId(order.id)}
+                              className="text-destructive focus:text-destructive"
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Delete Order
+                            </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </td>
@@ -291,13 +317,12 @@ export default function AdminOrders() {
                   <div>
                     <span className="text-muted-foreground">Status:</span>
                     <p className="font-medium">
-                      <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
-                        selectedOrder.payment_status === 'paid' ? 'bg-green-100 text-green-800' :
-                        selectedOrder.payment_status === 'partial_paid' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-red-100 text-red-800'
-                      }`}>
+                      <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${selectedOrder.payment_status === 'paid' ? 'bg-green-100 text-green-800' :
+                          selectedOrder.payment_status === 'partial_paid' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-red-100 text-red-800'
+                        }`}>
                         {selectedOrder.payment_status === 'paid' ? 'Paid' :
-                         selectedOrder.payment_status === 'partial_paid' ? 'Partial Paid' : 'Unpaid'}
+                          selectedOrder.payment_status === 'partial_paid' ? 'Partial Paid' : 'Unpaid'}
                       </span>
                     </p>
                   </div>
@@ -354,7 +379,7 @@ export default function AdminOrders() {
               )}
 
               {/* Courier Section */}
-              <OrderCourierSection 
+              <OrderCourierSection
                 order={selectedOrder}
                 onPrintLabel={() => {
                   setSelectedOrder(null);
@@ -414,6 +439,27 @@ export default function AdminOrders() {
         }}
         formatCurrency={formatCurrency}
       />
+
+      {/* Delete Order Confirmation */}
+      <AlertDialog open={!!deleteOrderId} onOpenChange={() => setDeleteOrderId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Order</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this order? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteOrder}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

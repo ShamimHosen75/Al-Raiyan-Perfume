@@ -4,6 +4,7 @@ import { FeaturedCategories } from '@/components/home/FeaturedCategories';
 import { FeaturedProducts } from '@/components/home/FeaturedProducts';
 import { ComboProducts } from '@/components/home/ComboProducts';
 import { NewArrivals } from '@/components/home/NewArrivals';
+import { OrganicAtor } from '@/components/home/OrganicAtor';
 import { HeroSlider } from '@/components/home/HeroSlider';
 import { LazySection } from '@/components/LazySection';
 import { Layout } from '@/components/layout/Layout';
@@ -28,6 +29,10 @@ const Index = () => {
 
       <LazySection>
         <BestSellers />
+      </LazySection>
+
+      <LazySection>
+        <OrganicAtor />
       </LazySection>
 
       <LazySection>

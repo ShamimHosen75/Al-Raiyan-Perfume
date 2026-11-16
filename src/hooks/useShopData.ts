@@ -81,7 +81,7 @@ function mapProduct(p: any): Product & { category: Category | null } {
   };
 }
 
-// Products - for Shop page (all products)
+// Products - for Shop page (all products) & Admin panel (no limit)
 export const useProducts = () => {
   return useQuery({
     queryKey: ['products'],
@@ -91,8 +91,7 @@ export const useProducts = () => {
           .from('products')
           .select('*, category:categories(*), product_variants(price_adjustment, sale_price, is_active)')
           .eq('is_active', true)
-          .order('created_at', { ascending: false })
-          .limit(20);
+          .order('created_at', { ascending: false });
         if (error) throw error;
         if (data && data.length > 0) return data.map(mapProduct);
       } catch (_) { /* fall through to mock */ }
@@ -321,7 +320,7 @@ export const useReviews = (approvedOnly = true) => {
 // Mutations
 export const useCreateProduct = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (product: Omit<Product, 'id' | 'created_at' | 'updated_at' | 'category'>) => {
       const { data, error } = await supabase
@@ -329,7 +328,7 @@ export const useCreateProduct = () => {
         .insert(product)
         .select()
         .single();
-      
+
       if (error) throw error;
       return data;
     },
@@ -345,7 +344,7 @@ export const useCreateProduct = () => {
 
 export const useUpdateProduct = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async ({ id, ...product }: Partial<Product> & { id: string }) => {
       const { data, error } = await supabase
@@ -354,7 +353,7 @@ export const useUpdateProduct = () => {
         .eq('id', id)
         .select()
         .single();
-      
+
       if (error) throw error;
       return data;
     },
@@ -370,7 +369,7 @@ export const useUpdateProduct = () => {
 
 export const useDeleteProduct = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from('products').delete().eq('id', id);
@@ -389,7 +388,7 @@ export const useDeleteProduct = () => {
 // Category mutations
 export const useCreateCategory = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (category: Omit<Category, 'id' | 'created_at' | 'updated_at' | 'product_count'>) => {
       const { data, error } = await supabase
@@ -397,7 +396,7 @@ export const useCreateCategory = () => {
         .insert(category)
         .select()
         .single();
-      
+
       if (error) throw error;
       return data;
     },
@@ -413,7 +412,7 @@ export const useCreateCategory = () => {
 
 export const useUpdateCategory = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async ({ id, ...category }: Partial<Category> & { id: string }) => {
       const { data, error } = await supabase
@@ -422,7 +421,7 @@ export const useUpdateCategory = () => {
         .eq('id', id)
         .select()
         .single();
-      
+
       if (error) throw error;
       return data;
     },
@@ -438,7 +437,7 @@ export const useUpdateCategory = () => {
 
 export const useDeleteCategory = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from('categories').delete().eq('id', id);
@@ -457,7 +456,7 @@ export const useDeleteCategory = () => {
 // Slider mutations
 export const useCreateSlide = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (slide: Omit<SliderSlide, 'id' | 'created_at' | 'updated_at'>) => {
       const { data, error } = await supabase
@@ -465,7 +464,7 @@ export const useCreateSlide = () => {
         .insert(slide)
         .select()
         .single();
-      
+
       if (error) throw error;
       return data;
     },
@@ -481,7 +480,7 @@ export const useCreateSlide = () => {
 
 export const useUpdateSlide = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async ({ id, ...slide }: Partial<SliderSlide> & { id: string }) => {
       const { data, error } = await supabase
@@ -490,7 +489,7 @@ export const useUpdateSlide = () => {
         .eq('id', id)
         .select()
         .single();
-      
+
       if (error) throw error;
       return data;
     },
@@ -506,7 +505,7 @@ export const useUpdateSlide = () => {
 
 export const useDeleteSlide = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from('slider_slides').delete().eq('id', id);
